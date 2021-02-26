@@ -1,0 +1,109 @@
+{% extends "base_model.html" %}
+
+{% block css_content %}
+
+<link rel="stylesheet" type="text/css" href="/static/app-assets/vendors/css/extensions/toastr.min.css">
+<link rel="stylesheet" type="text/css" href="/static/app-assets/css/plugins/extensions/ext-component-toastr.css">
+<link rel="stylesheet" type="text/css" href="/static/app-assets/css/pages/app-email.css">
+
+{% endblock %}
+
+{% block content %}
+<!-- Alerts page urls for js functions -->
+<input id="get-alerts" url="{{ url_for('alerts_router_api.get_alerts') }}" method="GET" hidden="hidden" />
+<input id="alert-details" url="{{ url_for('alerts_router.alert_details_page', alert_id=0) }}" method="GET" hidden="hidden" />
+<!-- Alerts page urls for js functions end -->
+
+<!-- BEGIN: Content-->
+<div class="app-content content email-application">
+    <div class="content-overlay"></div>
+    <div class="header-navbar-shadow"></div>
+    <div class="content-area-wrapper">
+        <div class="sidebar-left">
+            <div class="sidebar">
+                <div class="sidebar-content email-app-sidebar">
+                    <div class="email-app-menu">
+                        <div class="sidebar-menu-list">
+                            <div class="list-group list-group-messages">
+                                <a href="javascript:void(0)" class="list-group-item list-group-item-action active" filter="all">
+                                    <i data-feather="alert-triangle" class="font-medium-3 mr-50"></i>
+                                    <span class="align-middle">All</span>
+                                </a>
+                                <a href="javascript:void(0)" class="list-group-item list-group-item-action" filter="open">
+                                    <i data-feather="bell" class="font-medium-3 mr-50"></i>
+                                    <span class="align-middle">Open</span>
+                                </a>
+                                <a href="javascript:void(0)" class="list-group-item list-group-item-action" filter="ack">
+                                    <i data-feather="bell-off" class="font-medium-3 mr-50"></i>
+                                    <span class="align-middle">Acknowledged</span>
+                                </a>
+                                <a href="javascript:void(0)" class="list-group-item list-group-item-action" filter="closed">
+                                    <i data-feather="sun" class="font-medium-3 mr-50"></i>
+                                    <span class="align-middle">Closed</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="content-right">
+            <div class="content-wrapper">
+                <div class="content-header row">
+                </div>
+                <div class="content-body">
+                    <div class="body-content-overlay"></div>
+                    <!-- Email list Area -->
+                    <div class="email-app-list">
+                        <!-- Email search starts -->
+                        <div class="app-fixed-search d-flex align-items-center">
+                            <div class="sidebar-toggle d-block d-lg-none ml-1">
+                                <i data-feather="menu" class="font-medium-5"></i>
+                            </div>
+                            <div class="d-flex align-content-center justify-content-between w-100">
+                                <div class="input-group input-group-merge">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i data-feather="search" class="text-muted"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control" id="email-search" placeholder="Search alert" aria-label="Search..." aria-describedby="email-search" />
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Email search ends -->
+
+                        <!-- Email list starts -->
+                        <div class="email-user-list">
+                            <ul class="email-media-list">
+
+                            </ul>
+                            <div class="no-results">
+                                <h5>No Items Found</h5>
+                            </div>
+                        </div>
+                        <!-- Email list ends -->
+                    </div>
+                    <!--/ Email list Area -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: Content-->
+
+{% endblock %}
+
+{% block js_content %}
+
+<script src="/static/app-assets/vendors/js/extensions/toastr.min.js"></script>
+<script src="/static/assets/js/alerts-page.js"></script>
+
+<script>
+  $(window).on('load', function() {
+    $("#main-menu-navigation li.active").removeClass("active");
+    $("#main-menu-navigation li#alerts").addClass("active");
+  })
+</script>
+
+{% endblock %}

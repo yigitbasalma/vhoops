@@ -1,0 +1,248 @@
+{% extends "base_model.html" %}
+
+{% block css_content %}
+
+<link rel="stylesheet" type="text/css" href="/static/app-assets/vendors/css/tables/datatable/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" type="text/css" href="/static/app-assets/vendors/css/tables/datatable/responsive.bootstrap4.min.css">
+<link rel="stylesheet" type="text/css" href="/static/app-assets/vendors/css/tables/datatable/buttons.bootstrap4.min.css">
+<link rel="stylesheet" type="text/css" href="/static/app-assets/vendors/css/extensions/toastr.min.css">
+<link rel="stylesheet" type="text/css" href="/static/app-assets/css/plugins/extensions/ext-component-toastr.css">
+<link rel="stylesheet" type="text/css" href="/static/app-assets/css/pages/page-blog.css">
+
+{% endblock %}
+
+{% block content %}
+<!-- Alert details page urls for js functions -->
+<input id="ack-alert" url="{{ url_for('alerts_router_api.acknowledge_alert', alert_id=alert.id) }}" method="PUT" hidden="hidden" />
+<input id="un-ack-alert" url="{{ url_for('alerts_router_api.acknowledge_alert', alert_id=alert.id) }}" method="DELETE" hidden="hidden" />
+<input id="close-alert" url="{{ url_for('alerts_router_api.close_alert', alert_id=alert.id) }}" method="PUT" hidden="hidden" />
+<!-- Alert details page urls for js functions end -->
+
+<!-- BEGIN: Content-->
+<div class="app-content content ">
+    <div class="content-overlay"></div>
+    <div class="header-navbar-shadow"></div>
+    <div class="content-wrapper">
+        <div class="content-header row">
+            <div class="content-header-left col-md-9 col-12 mb-2">
+                <div class="row breadcrumbs-top">
+                    <div class="col-12">
+                        <h2 class="content-header-title float-left mb-0">Alert Details</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
+                <div class="form-group breadcrumb-right">
+                    {% if alert.status == "closed" %}
+                        {% set closed_by,elapsed_time=alert.report.split("=") %}
+                        <button class="btn-icon btn btn-outline-success btn-round btn-sm" type="button" data-toggle="tooltip" data-placement="top" title="Username who was close alert."><i data-feather="user"></i> {{ closed_by }}</button>
+                        <button class="btn-icon btn btn-outline-success btn-round btn-sm" type="button" data-toggle="tooltip" data-placement="top" title="Elapsed time."><i data-feather="watch"></i> {{ elapsed_time }}</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="content-detached">
+            <div class="content-body">
+                <!-- Alert Detail -->
+                <div class="blog-detail-wrapper">
+                    <div class="row">
+                        <!-- Alert -->
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">{{ alert.alias }}</h4>
+                                    <div class="my-1 py-25">
+                                        {% for tag in alert.tags.split(",") %}
+                                        <a href="javascript:void(0);">
+                                            <div class="badge badge-pill badge-light-secondary mr-50" data-toggle="tooltip" data-placement="top" title="Alert tag.">{{ tag }}</div>
+                                        </a>
+                                        {% endfor %}
+                                    </div>
+                                    <p class="card-text mb-2">{{ alert.message }}</p>
+                                    <hr class="my-2" />
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center">
+                                            <div class="d-flex align-items-center mr-1">
+                                                <span class="mr-50 badge badge-light-secondary" data-toggle="tooltip" data-placement="top" title="Alert count. (Calculating by alias)">#{{ alert.alert_count }}</span>
+                                                <span class="mr-50 badge badge-light-secondary" data-toggle="tooltip" data-placement="top" title="Alert source.">{{ alert.source }}</span>
+                                                <span class="mr-50 badge badge-light-secondary" data-toggle="tooltip" data-placement="top" title="Team name for alert.">{{ alert.team.name }}</span>
+                                                <span class="mr-50 badge badge-light-danger" data-toggle="tooltip" data-placement="top" title="Alert priority.">{{ alert.priority }}</span>
+                                                <span class="mr-50 badge badge-light-info" data-toggle="tooltip" data-placement="top" title="Occurred at time.">{{ alert.registration_timestamp }}</span>
+                                                {% if alert.last_occurred_at %}
+                                                    <span class="mr-50 badge badge-light-warning" data-toggle="tooltip" data-placement="top" title="Last occurred time.(Count must be more than 1)">{{ alert.last_occurred_at }}</span>
+                                                {% endif %}
+                                                {% if alert.snoozed %}
+                                                    <span class="mr-50 badge badge-light-success"><i data-feather="eye-off" data-toggle="tooltip" data-placement="top" title="Alert acknowledged"></i></span>
+                                                    <span class="mr-50 badge badge-light-success" data-toggle="tooltip" data-placement="top" title="Snoozed until.">{{ alert.snoozed_until }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="dropdown blog-detail-share">
+                                            <i data-feather="settings" class="font-medium-5 text-body cursor-pointer" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                {% if alert.status != 'closed' %}
+                                                <a href="javascript:void(0);" class="dropdown-item py-50 px-1 ack-alert" data-toggle="tooltip" data-placement="right" title="Acknowledge alert.">
+                                                    <i data-feather="eye" class="font-medium-3"></i>
+                                                </a>
+                                                <a href="javascript:void(0);" class="dropdown-item py-50 px-1 un-ack-alert" data-toggle="tooltip" data-placement="right" title="Un-Acknowledge alert.">
+                                                    <i data-feather="eye-off" class="font-medium-3"></i>
+                                                </a>
+                                                <a href="javascript:void(0);" class="dropdown-item py-50 px-1 close-alert" data-toggle="tooltip" data-placement="right" title="Close alert.">
+                                                    <i data-feather="sun" class="font-medium-3"></i>
+                                                </a>
+                                                {% endif %}
+                                                {% if alert.status == 'closed' %}
+                                                <a href="javascript:void(0);" class="dropdown-item py-50 px-1 delete-alert" data-toggle="tooltip" data-placement="right" title="Delete alert.">
+                                                    <i data-feather="trash" class="font-medium-3"></i>
+                                                </a>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--/ Alert -->
+
+                        <!-- Alert Actions -->
+                        <div class="col-12 mt-1" id="alertActions">
+                              <section id="accordion-with-shadow">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div id="accordionWrapa10" role="tablist" aria-multiselectable="true">
+                                            <div class="card collapse-icon">
+                                                <div class="card-body">
+                                                    <div class="collapse-shadow">
+                                                        <div class="card">
+                                                            <div id="action-header" class="card-header" data-toggle="collapse" role="button" data-target="#action-body" aria-expanded="false" aria-controls="action-body">
+                                                                <span class="lead collapse-title"> Actions <span class="mr-50 badge badge-light-secondary">{{ alert.actions | length }}</span></span>
+                                                            </div>
+                                                            <div id="action-body" role="tabpanel" data-parent="#accordionWrapa10" aria-labelledby="action-header" class="collapse">
+                                                                <div class="card-body">
+                                                                    <!-- Basic table -->
+                                                                    <section id="basic-datatable">
+                                                                        <div class="row">
+                                                                            <div class="col-12">
+                                                                                <div class="card">
+                                                                                    <table class="datatables-basic table">
+                                                                                        <thead>
+                                                                                            <tr>
+                                                                                                <th>Details</th>
+                                                                                                <th>Date</th>
+                                                                                            </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                            {% for action in alert.actions %}
+                                                                                            <tr>
+                                                                                                <td>{{ action.details }}</td>
+                                                                                                <td>{{ action.registration_timestamp }}</td>
+                                                                                            </tr>
+                                                                                            {% endfor %}
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </section>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="card">
+                                                            <div id="heading11" class="card-header" data-toggle="collapse" role="button" data-target="#accordion10" aria-expanded="false" aria-controls="accordion10">
+                                                                <span class="lead collapse-title"> Comments <span class="mr-50 badge badge-light-secondary">{{ alert.comments | length }}</span></span>
+                                                            </div>
+                                                            <div id="accordion10" role="tabpanel" data-parent="#accordionWrapa10" aria-labelledby="heading11" class="collapse">
+                                                                <div class="card-body">
+                                                                    {% if alert.comments %}
+                                                                        {% for comment in alert.comments %}
+                                                                        <div class="card">
+                                                                            <div class="card-body">
+                                                                                <div class="media">
+                                                                                    <div class="media-body">
+                                                                                        <h6 class="font-weight-bolder mb-25">{{ comment.user.first_name }} {{ comment.user.last_name }}</h6>
+                                                                                        <p class="card-text">{{ comment.registration_timestamp }}</p>
+                                                                                        <p class="card-text">{{ comment.comment }}</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        {% endfor %}
+                                                                    {% else %}
+                                                                    <div class="card">
+                                                                        <div class="card-body">
+                                                                            <div class="media">
+                                                                                <div class="media-body">
+                                                                                    <h6 class="font-weight-bolder mb-25">No comments found.</h6>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        <!--/ Alert Comment -->
+
+                        <!-- Leave a Alert Comment -->
+                        <div class="col-12 mt-1">
+                            <h6 class="section-label mt-25">Leave a Comment</h6>
+                            <div class="card">
+                                <div class="card-body">
+                                    <form action="{{ url_for('alerts_router_api.create_alert_comment', alert_id=alert.id) }}" method="POST" class="form">
+                                        {{ form.csrf_token }}
+                                        <div class="row">
+                                            <div class="col-12">
+                                                {{ form.comment }}
+                                            </div>
+                                            <div class="col-12">
+                                                <button type="submit" class="btn btn-primary">Post Comment</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!--/ Leave a Alert Comment -->
+                    </div>
+                </div>
+                <!--/ Alert Detail -->
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: Content-->
+
+{% endblock %}
+
+{% block js_content %}
+
+<script src="/static/app-assets/vendors/js/tables/datatable/jquery.dataTables.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/datatables.bootstrap4.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/dataTables.responsive.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/responsive.bootstrap4.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/datatables.buttons.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/jszip.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/pdfmake.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/vfs_fonts.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/buttons.html5.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/buttons.print.min.js"></script>
+<script src="/static/app-assets/vendors/js/extensions/toastr.min.js"></script>
+<script src="/static/assets/js/alert-details-page.js"></script>
+
+<script>
+  $(window).on('load', function() {
+    $("#main-menu-navigation li.active").removeClass("active");
+    $("#main-menu-navigation li#alerts").addClass("active");
+  })
+</script>
+
+{% endblock %}

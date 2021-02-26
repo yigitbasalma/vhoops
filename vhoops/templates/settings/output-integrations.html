@@ -1,0 +1,182 @@
+{% extends "base_model.html" %}
+
+{% block css_content %}
+
+<link rel="stylesheet" type="text/css" href="/static/app-assets/css/pages/app-file-manager.css">
+
+{% endblock %}
+
+{% block content %}
+<!-- Integrations page urls for js functions -->
+<input id="get-alerts" url="{{ url_for('alerts_router_api.get_alerts') }}" method="GET" hidden="hidden" />
+<!-- Integrations page urls for js functions end -->
+
+<!-- BEGIN: Content-->
+<div class="app-content content file-manager-application">
+    <div class="content-overlay"></div>
+    <div class="header-navbar-shadow"></div>
+    <div class="content-area-wrapper">
+        <div class="sidebar-left">
+            <div class="sidebar">
+                <div class="sidebar-file-manager">
+                    <div class="sidebar-inner">
+                        <!-- sidebar menu links starts -->
+                        <!-- add file button -->
+                        <div class="dropdown dropdown-actions">
+                            <button class="btn btn-primary add-file-btn text-center btn-block" data-toggle="modal" data-target="#new-integration-modal">
+                                <span class="align-middle">Add New</span>
+                            </button>
+                        </div>
+                        <!-- add file button ends -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="content-right">
+            <div class="content-wrapper">
+                <div class="content-header row">
+                </div>
+                <div class="content-body">
+                    <!-- overlay container -->
+                    <div class="body-content-overlay"></div>
+
+                    <!-- file manager app content starts -->
+                    <div class="file-manager-main-content">
+                        <!-- search area start -->
+                        <div class="file-manager-content-header d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center" style="width: 100%;">
+                                <div class="sidebar-toggle d-block d-xl-none float-left align-middle ml-1">
+                                    <i data-feather="menu" class="font-medium-5"></i>
+                                </div>
+                                <div class="input-group input-group-merge shadow-none m-0 flex-grow-1">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text border-0">
+                                            <i data-feather="search"></i>
+                                        </span>
+                                    </div>
+                                    <input type="text" class="form-control files-filter border-0 bg-transparent" placeholder="Search" />
+                                </div>
+                            </div>
+                        </div>
+                        <!-- search area ends here -->
+
+                        <div class="file-manager-content-body">
+                            <div class="view-container">
+                                <h6 class="files-section-title mt-25 mb-75">Integrations</h6>
+                                <div class="card file-manager-item folder level-up">
+                                    <div class="card-img-top file-logo-wrapper">
+                                        <div class="d-flex align-items-center justify-content-center w-100">
+                                            <i data-feather="arrow-up"></i>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pl-2 pt-0 pb-1">
+                                        <div class="content-wrapper">
+                                            <p class="card-text file-name mb-0">...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% for integration in integrations %}
+                                <div class="card file-manager-item folder">
+                                    <div class="card-img-top file-logo-wrapper">
+                                        <div class="dropdown float-right" data-target="dd-{{ integration.id }}">
+                                            <i data-feather="more-vertical" class="toggle-dropdown mt-n25"></i>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-center w-100">
+                                            <img src="{{ integration.icon_url }}" alt="{{ integration.name }}" height="50" class="p-25" />
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="content-wrapper">
+                                            <p class="card-text file-name mb-0">{{ integration.name }}</p>
+                                        </div>
+                                        <small class="file-accessed text-muted">Created at {{ integration.registration_timestamp }}</small>
+                                    </div>
+                                </div>
+                                <!-- File Dropdown Starts-->
+                                <div class="dropdown-menu dropdown-menu-right file-dropdown dd-{{ integration.id }}">
+                                    <a class="dropdown-item edit-integration" href="{{ url_for('settings_router.output_integration_details_page', integration_id=integration.id) }}">
+                                        <i data-feather="edit" class="align-middle mr-50"></i>
+                                        <span class="align-middle">Edit</span>
+                                    </a>
+                                    <a class="dropdown-item" href="javascript:void(0);">
+                                        <i data-feather="trash" class="align-middle mr-50"></i>
+                                        <span class="align-middle">Delete</span>
+                                    </a>
+                                </div>
+                                <!-- /File Dropdown Ends -->
+                                {% endfor %}
+                                <div class="d-none flex-grow-1 align-items-center no-result mb-3">
+                                    <i data-feather="alert-circle" class="mr-50"></i>
+                                    No Results
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- file manager app content ends -->
+
+                    <!-- Create New Folder Modal Starts-->
+                    <div class="modal fade" id="new-integration-modal">
+                        <div class="modal-dialog modal-dialog-centered modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">New Integration</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="add-new-record modal-content pt-0" action="{{ url_for('settings_router_api.create_new_integration') }}" method="POST">
+                                        {{ form.csrf_token }}
+                                        <div class="modal-body flex-grow-1">
+                                            <div class="form-group">
+                                                <label class="form-label">{{ form.name.label.text }}</label>
+                                                {{ form.name }}
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">{{ form.integration_icon.label.text }}</label>
+                                                {{ form.integration_icon }}
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">{{ form.identifier.label.text }}</label>
+                                                {{ form.identifier }}
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">{{ form.config.label.text }}</label>
+                                                {{ form.config }}
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">{{ form.fields.label.text }}</label>
+                                                {{ form.fields }}
+                                            </div>
+                                            <button type="submit" class="btn btn-primary data-submit mr-1">Create</button>
+                                            <button type="reset" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Create New Folder Modal Ends -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: Content-->
+
+{% endblock %}
+
+{% block js_content %}
+
+<script src="/static/assets/js/settings.integrations-page.js"></script>
+
+<script>
+  $(window).on('load', function() {
+    $("#main-menu-navigation li.active").removeClass("active");
+    $("#main-menu-navigation li#settings").addClass("active");
+  })
+</script>
+
+{% endblock %}

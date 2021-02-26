@@ -1,0 +1,135 @@
+{% extends "base_model.html" %}
+
+{% block css_content %}
+
+<link rel="stylesheet" type="text/css" href="/static/app-assets/vendors/css/tables/datatable/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" type="text/css" href="/static/app-assets/vendors/css/tables/datatable/responsive.bootstrap4.min.css">
+<link rel="stylesheet" type="text/css" href="/static/app-assets/vendors/css/pickers/flatpickr/flatpickr.min.css">
+<link rel="stylesheet" type="text/css" href="/static/app-assets/css/plugins/forms/pickers/form-flat-pickr.css">
+<link rel="stylesheet" type="text/css" href="/static/app-assets/vendors/css/tables/datatable/buttons.bootstrap4.min.css">
+
+{% endblock %}
+
+{% block content %}
+
+<!-- Teams page urls for js functions -->
+<input id="get-users" url="{{ url_for('users_router_api.get_users') }}" method="GET" hidden="hidden" />
+<input id="delete-user" url="{{ url_for('users_router_api.remove_user', user_id=0) }}" method="GET" hidden="hidden" />
+<!-- Teams page urls for js functions end -->
+
+<div class="app-content content ">
+  <div class="content-overlay"></div>
+  <div class="header-navbar-shadow"></div>
+  <div class="content-wrapper">
+    <div class="content-header row">
+      <div class="content-header-left col-md-9 col-12 mb-2">
+        <div class="row breadcrumbs-top">
+          <div class="col-12">
+            <h2 class="content-header-title float-left mb-0">Users</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="content-body">
+      <!-- Basic table -->
+        <section id="basic-datatable">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <table class="datatables-basic table">
+                            <thead>
+                                <tr>
+                                    <th>id</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Username</th>
+                                    <th>Teams</th>
+                                    <th>Groups</th>
+                                    <th>Email</th>
+                                    <th>Phone Number</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal to add new record -->
+            <div class="modal modal-slide-in fade" id="modals-slide-in">
+                <div class="modal-dialog sidebar-sm">
+                    <form class="add-new-record modal-content pt-0" action="{{ url_for('users_router_api.create_new_user') }}" method="POST">
+                        {{ form.csrf_token }}
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">×</button>
+                        <div class="modal-header mb-1">
+                            <h5 class="modal-title" id="new-team-modal-label">New User</h5>
+                        </div>
+                        <div class="modal-body flex-grow-1">
+                            <div class="form-group">
+                                <label class="form-label">{{ form.first_name.label.text }}</label>
+                                {{ form.first_name }}
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">{{ form.last_name.label.text }}</label>
+                                {{ form.last_name }}
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">{{ form.username.label.text }}</label>
+                                {{ form.username }}
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">{{ form.email.label.text }}</label>
+                                {{ form.email }}
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">{{ form.phone.label.text }}</label>
+                                {{ form.phone }}
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">{{ form.teams.label.text }}</label>
+                                {{ form.teams }}
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">{{ form.group.label.text }}</label>
+                                {{ form.group }}
+                            </div>
+                            <button type="submit" class="btn btn-primary data-submit mr-1">Submit</button>
+                            <button type="reset" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+        <!--/ Basic table -->
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block js_content %}
+
+<script src="/static/app-assets/vendors/js/tables/datatable/jquery.dataTables.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/datatables.bootstrap4.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/dataTables.responsive.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/responsive.bootstrap4.js"></script>
+<script src="/static/app-assets/vendors/js/pickers/flatpickr/flatpickr.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/datatables.checkboxes.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/datatables.buttons.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/jszip.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/pdfmake.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/vfs_fonts.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/buttons.html5.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/buttons.print.min.js"></script>
+<script src="/static/app-assets/vendors/js/forms/cleave/cleave.min.js"></script>
+<script src="/static/app-assets/vendors/js/forms/cleave/addons/cleave-phone.tr.js"></script>
+<script src="/static/assets/js/users-page.js"></script>
+
+<script>
+  $(window).on('load', function() {
+    $("#main-menu-navigation li.active").removeClass("active");
+    $("#main-menu-navigation li#users").addClass("active");
+  })
+</script>
+
+{% endblock %}

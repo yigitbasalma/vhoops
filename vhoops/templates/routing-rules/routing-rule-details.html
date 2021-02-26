@@ -1,0 +1,323 @@
+{% extends "base_model.html" %}
+
+{% block css_content %}
+
+<link rel="stylesheet" type="text/css" href="/static/app-assets/css/pages/page-blog.css">
+
+{% endblock %}
+
+{% block content %}
+
+<!-- Teams page urls for js functions -->
+<input id="delete-rule" url="{{ url_for('routing_rules_router_api.delete_route_definition_rule', route_definition_id=route_definition.id, rule_id=0) }}" method="GET" hidden="hidden" />
+<input id="delete-notification-rule" url="{{ url_for('routing_rules_router_api.delete_route_definition_notification_integration', route_definition_id=route_definition.id, rule_id=0) }}" method="GET" hidden="hidden" />
+<!-- Teams page urls for js functions end -->
+
+<!-- BEGIN: Content-->
+<div class="app-content content ">
+    <div class="content-overlay"></div>
+    <div class="header-navbar-shadow"></div>
+    <div class="content-wrapper">
+        <div class="content-header row">
+            <div class="content-header-left col-md-9 col-12 mb-2">
+                <div class="row breadcrumbs-top">
+                    <div class="col-12">
+                        <h2 class="content-header-title float-left mb-0">Routing Definition Details</h2>
+                        <div class="breadcrumb-wrapper">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{{ url_for('routing_rules_router.routing_rules_page') }}">Routing Definition</a>
+                                </li>
+                                <li class="breadcrumb-item active">Edit
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content-detached">
+            <div class="content-body">
+            <!-- Blog Edit -->
+                <div class="blog-edit-wrapper">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="media">
+                                        <div class="media-body">
+                                            <h6 class="mb-25">{{ route_definition.name }} Rule Definition</h6>
+                                            <p class="card-text">Created at {{ route_definition.registration_timestamp }}</p>
+                                        </div>
+                                    </div>
+                                    <!-- Form -->
+                                    <form action="{{ url_for('routing_rules_router_api.update_route_definition', route_definition_id=route_definition.id) }}" class="mt-2" method="POST">
+                                        {{ rd_form.csrf_token }}
+                                        <div class="row">
+                                            <div class="col-md-6 col-12">
+                                                <div class="form-group mb-2">
+                                                    <label for="">{{ rd_form.name.label.text }}</label>
+                                                    {{ rd_form.name }}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-12">
+                                                <div class="form-group mb-2">
+                                                    <label>{{ rd_form.team.label.text }}</label>
+                                                    {{ rd_form.team }}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 col-12">
+                                                <div class="form-group mb-2">
+                                                    <label for="">{{ rd_form.description.label.text }}</label>
+                                                    {{ rd_form.description }}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-12">
+                                                <div class="form-group mb-2">
+                                                    <div class="custom-control custom-switch custom-control-inline">
+                                                        {{ rd_form.status }}
+                                                        <label class="custom-control-label" for="is-available">{{ rd_form.status.label.text }}</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 mt-50">
+                                                <button type="submit" class="btn btn-primary mr-1">Save Changes</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <!--/ Form -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--/ Blog Edit -->
+
+                <!-- Blog Edit -->
+                <div class="blog-edit-wrapper">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <!-- Basic table -->
+                                    <section id="basic-datatable">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <h3>Rules</h3>
+                                            </div>
+                                            <div class="col-12">
+                                                <button class="dt-button btn btn-primary mb-50 float-right" type="button" data-toggle="modal" data-target="#new-rule-modal"><span>Add New Rule</span></button>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="card">
+                                                    <table class="datatables-basic table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>#</th>
+                                                                <th>Column</th>
+                                                                <th>Condition Not</th>
+                                                                <th>Condition</th>
+                                                                <th>Value</th>
+                                                                <th>Actions</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {% if route_definition.rules %}
+                                                            {% for rule in route_definition.rules %}
+                                                                <tr>
+                                                                    <td>{{ rule.id }}</td>
+                                                                    <td>{{ rule.column.title() }}</td>
+                                                                    <td>{{ "-" if not rule.condition_not else "NOT" }}</td>
+                                                                    <td>{{ rrc[rule.condition] }}</td>
+                                                                    <td>{{ rule.value }}</td>
+                                                                    <td><a href="javascript:;" class="delete-rule" style="color: red;"><i data-feather="trash"></i></a></td>
+                                                                </tr>
+                                                            {% endfor %}
+                                                        {% else %}
+                                                            <th>
+                                                                <td colspan="3" align="center">No rules found</td>
+                                                            </th>
+                                                        {% endif %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="new-rule-modal">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">New Route Definition</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="add-new-record modal-content pt-0" action="{{ url_for('routing_rules_router_api.create_route_definition_rule', route_definition_id=route_definition.id) }}" method="POST">
+                                        {{ rud_form.csrf_token }}
+                                        <div class="modal-body flex-grow-1">
+                                            <div class="row">
+                                                <div class="col-md-4 col-12">
+                                                    <div class="form-group">
+                                                        <label class="form-label">{{ rud_form.column.label.text }}</label>
+                                                        {{ rud_form.column }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 col-12">
+                                                    <div class="form-group">
+                                                        <label class="form-label">{{ rud_form.condition_not.label.text }}</label>
+                                                        {{ rud_form.condition_not }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 col-12">
+                                                    <div class="form-group">
+                                                        <label class="form-label">{{ rud_form.condition.label.text }}</label>
+                                                        {{ rud_form.condition }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-50">
+                                                <div class="col-12">
+                                                    <label class="form-label">{{ rud_form.value.label.text }}</label>
+                                                    {{ rud_form.value }}
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary data-submit mr-1">Create</button>
+                                            <button type="reset" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Blog Edit -->
+                <div class="blog-edit-wrapper">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <!-- Basic table -->
+                                    <section id="basic-datatable-2">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <h3>Notification Rules</h3>
+                                            </div>
+                                            <div class="col-12">
+                                                <button class="dt-button btn btn-primary mb-50 float-right" type="button" data-toggle="modal" data-target="#new-notification-integration-modal"><span>Add New Rule</span></button>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="card">
+                                                    <table class="datatables-basic table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>#</th>
+                                                                <th>Integration</th>
+                                                                <th>Responsible</th>
+                                                                <th>Delay</th>
+                                                                <th>Actions</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {% if route_definition.notification_integrations %}
+                                                            {% for rule in route_definition.notification_integrations %}
+                                                                <tr>
+                                                                    <td>{{ rule.id }}</td>
+                                                                    <td>{{ rule.integration.name }}</td>
+                                                                    <td>{{ "Team" if rule.responsible else "On-Call User" }}</td>
+                                                                    <td>{{ rule.delay }}</td>
+                                                                    <td><a href="javascript:;" class="delete-notification-rule" style="color: red;"><i data-feather="trash"></i></a></td>
+                                                                </tr>
+                                                            {% endfor %}
+                                                        {% else %}
+                                                            <th>
+                                                                <td colspan="3" align="center">No rules found</td>
+                                                            </th>
+                                                        {% endif %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="new-notification-integration-modal">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">New Notification Rule</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="add-new-record modal-content pt-0" action="{{ url_for('routing_rules_router_api.create_route_definition_notification_integration', route_definition_id=route_definition.id) }}" method="POST">
+                                        {{ ni_form.csrf_token }}
+                                        <div class="modal-body flex-grow-1">
+                                            <div class="row">
+                                                <div class="col-md-6 col-12">
+                                                    <div class="form-group">
+                                                        <label class="form-label">{{ ni_form.integration.label.text }}</label>
+                                                        {{ ni_form.integration }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-12">
+                                                    <div class="form-group">
+                                                        <label class="form-label">{{ ni_form.responsible.label.text }}</label>
+                                                        {{ ni_form.responsible }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 col-12">
+                                                    <div class="form-group">
+                                                        <label class="form-label">{{ ni_form.delay.label.text }}</label>
+                                                        {{ ni_form.delay }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 col-12">
+                                                    <div class="form-group">
+                                                        <label class="form-label">{{ ni_form.extra_parameters.label.text }}</label>
+                                                        {{ ni_form.extra_parameters }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary data-submit mr-1">Create</button>
+                                            <button type="reset" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: Content-->
+
+{% endblock %}
+
+{% block js_content %}
+
+<script src="/static/assets/js/routing-rule-details-page.js"></script>
+
+<script>
+  $(window).on('load', function() {
+    $("#main-menu-navigation li.active").removeClass("active");
+    $("#main-menu-navigation li#routing-rules").addClass("active");
+  })
+</script>
+
+{% endblock %}

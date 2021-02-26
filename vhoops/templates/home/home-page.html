@@ -1,0 +1,122 @@
+{% extends "base_model.html" %}
+
+{% block css_content %}
+
+<link rel="stylesheet" type="text/css" href="/static/app-assets/vendors/css/tables/datatable/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" type="text/css" href="/static/app-assets/vendors/css/tables/datatable/responsive.bootstrap4.min.css">
+<link rel="stylesheet" type="text/css" href="/static/app-assets/vendors/css/tables/datatable/buttons.bootstrap4.min.css">
+
+{% endblock %}
+
+{% block content %}
+
+<div class="app-content content ">
+  <div class="content-overlay"></div>
+  <div class="header-navbar-shadow"></div>
+  <div class="content-wrapper">
+    <div class="content-header row">
+      <div class="content-header-left col-md-9 col-12 mb-2">
+        <div class="row breadcrumbs-top">
+          <div class="col-12">
+            <h2 class="content-header-title float-left mb-0">Home</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="content-body">
+      <!-- Statistics card section -->
+      <section id="statistics-card">
+
+          <!-- Stats Vertical Card -->
+          <div class="row">
+              <div class="col-xl-4 col-md-4 col-sm-6">
+                  <div class="card text-center">
+                      <div class="card-body">
+                          <div class="avatar bg-light-info p-50 mb-1">
+                              <div class="avatar-content">
+                                  <i data-feather="alert-triangle" class="font-medium-5"></i>
+                              </div>
+                          </div>
+                          <h2 class="font-weight-bolder">{{ alerts['data'] | length }}</h2>
+                          <p class="card-text">Active Alerts</p>
+                      </div>
+                  </div>
+              </div>
+              <div class="col-xl-4 col-md-4 col-sm-6">
+                  <div class="card text-center">
+                      <div class="card-body">
+                          <div class="avatar bg-light-info p-50 mb-1">
+                              <div class="avatar-content">
+                                  <i data-feather="users" class="font-medium-5"></i>
+                              </div>
+                          </div>
+                          <h2 class="font-weight-bolder">{{ teams['data'] | length }}</h2>
+                          <p class="card-text">Teams</p>
+                      </div>
+                  </div>
+              </div>
+              <div class="col-xl-4 col-md-4 col-sm-6">
+                  <div class="card text-center">
+                      <div class="card-body">
+                          <div class="avatar bg-light-info p-50 mb-1">
+                              <div class="avatar-content">
+                                  <i data-feather="user" class="font-medium-5"></i>
+                              </div>
+                          </div>
+                          <h2 class="font-weight-bolder">{{ users['data'] | length }}</h2>
+                          <p class="card-text">Users</p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <!--/ Stats Vertical Card -->
+
+      </section>
+      <!--/ Statistics Card section-->
+
+      <section id="basic-datatable">
+            <div class="row">
+                <div class="col-4">
+                    <div class="card">
+                        <table class="datatables-basic table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Total Downtime</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block js_content %}
+
+<script src="/static/app-assets/vendors/js/tables/datatable/jquery.dataTables.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/datatables.bootstrap4.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/dataTables.responsive.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/responsive.bootstrap4.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/datatables.checkboxes.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/datatables.buttons.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/jszip.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/pdfmake.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/vfs_fonts.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/buttons.html5.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/buttons.print.min.js"></script>
+<script src="/static/app-assets/vendors/js/forms/cleave/cleave.min.js"></script>
+<script src="/static/assets/js/home-page.js"></script>
+
+<script>
+  $(window).on('load', function() {
+    $("#main-menu-navigation li.active").removeClass("active");
+    $("#main-menu-navigation li#home").addClass("active");
+  })
+</script>
+
+{% endblock %}

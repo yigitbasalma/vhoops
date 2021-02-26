@@ -1,0 +1,118 @@
+{% extends "base_model.html" %}
+
+{% block css_content %}
+
+<link rel="stylesheet" type="text/css" href="/static/app-assets/css/pages/page-blog.css">
+
+{% endblock %}
+
+{% block content %}
+
+<!-- BEGIN: Content-->
+<div class="app-content content ">
+    <div class="content-overlay"></div>
+    <div class="header-navbar-shadow"></div>
+    <div class="content-wrapper">
+        <div class="content-header row">
+            <div class="content-header-left col-md-9 col-12 mb-2">
+                <div class="row breadcrumbs-top">
+                    <div class="col-12">
+                        <h2 class="content-header-title float-left mb-0">Integration Details</h2>
+                        <div class="breadcrumb-wrapper">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{{ url_for('settings_router.output_integration_page') }}">Settings</a>
+                                </li>
+                                <li class="breadcrumb-item"><a href="{{ url_for('settings_router.output_integration_page') }}">Output Integrations</a>
+                                </li>
+                                <li class="breadcrumb-item active">Edit
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content-detached">
+            <div class="content-body">
+            <!-- Blog Edit -->
+                <div class="blog-edit-wrapper">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="media">
+                                        <div class="avatar mr-75">
+                                            <img src="{{ integration.icon_url }}" width="38" height="38" alt="icon" />
+                                        </div>
+                                        <div class="media-body">
+                                            <h6 class="mb-25">{{ integration.name }} Integration</h6>
+                                            <p class="card-text">Created at {{ integration.registration_timestamp }}</p>
+                                        </div>
+                                    </div>
+                                    <!-- Form -->
+                                    <form action="{{ url_for('settings_router_api.update_integration', integration_id=integration.id) }}" class="mt-2" method="POST">
+                                        {{ form.csrf_token }}
+                                        <div class="row">
+                                            <div class="col-md-6 col-12">
+                                                <div class="form-group mb-2">
+                                                    <label for="">{{ form.name.label.text }}</label>
+                                                    {{ form.name }}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-12">
+                                                <div class="form-group mb-2">
+                                                    <label for="">{{ form.integration_icon.label.text }}</label>
+                                                    {{ form.integration_icon }}
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-group mb-2">
+                                                    <label>{{ form.config.label.text }}</label>
+                                                    {{ form.config }}
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-group mb-2">
+                                                    <label>{{ form.fields.label.text }}</label>
+                                                    {{ form.fields }}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-12">
+                                                <div class="form-group mb-2">
+                                                    <div class="custom-control custom-switch custom-control-inline">
+                                                        {{ form.is_available }}
+                                                        <label class="custom-control-label" for="is-available">{{ form.is_available.label.text }}</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 mt-50">
+                                                <button type="submit" class="btn btn-primary mr-1">Save Changes</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <!--/ Form -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--/ Blog Edit -->
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: Content-->
+
+{% endblock %}
+
+{% block js_content %}
+
+<script>
+  $(window).on('load', function() {
+    $("#main-menu-navigation li.active").removeClass("active");
+    $("#main-menu-navigation li#settings").addClass("active");
+  })
+</script>
+
+{% endblock %}

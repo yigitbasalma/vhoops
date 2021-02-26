@@ -1,0 +1,139 @@
+{% extends "base_model.html" %}
+
+{% block css_content %}
+
+<!--suppress ALL -->
+<link rel="stylesheet" type="text/css" href="/static/app-assets/vendors/css/calendars/fullcalendar.min.css">
+<link rel="stylesheet" type="text/css" href="/static/app-assets/vendors/css/pickers/flatpickr/flatpickr.min.css">
+<link rel="stylesheet" type="text/css" href="/static/app-assets/css/plugins/forms/pickers/form-flat-pickr.css">
+<link rel="stylesheet" type="text/css" href="/static/app-assets/css/pages/app-calendar.css">
+
+{% endblock %}
+
+{% block content %}
+
+<!-- Teams page urls for js functions -->
+<input id="get-on-call" url="{{ url_for('on_call_router_api.get_on_call') }}" method="GET" hidden="hidden" />
+<input id="delete-on-call" url="{{ url_for('on_call_router_api.delete_on_call_schedule', on_call_id=0) }}" method="GET" hidden="hidden" />
+<!-- Teams page urls for js functions end -->
+
+<div class="app-content content ">
+  <div class="content-overlay"></div>
+  <div class="header-navbar-shadow"></div>
+  <div class="content-wrapper">
+    <div class="content-header row">
+      <div class="content-header-left col-md-9 col-12 mb-2">
+        <div class="row breadcrumbs-top">
+          <div class="col-12">
+            <h2 class="content-header-title float-left mb-0">On-Call</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="content-body">
+      <!-- Full calendar start -->
+      <section>
+          <div class="app-calendar overflow-hidden border">
+              <div class="row no-gutters">
+                  <!-- Sidebar -->
+                  <div class="col app-calendar-sidebar flex-grow-0 overflow-hidden d-flex flex-column" id="app-calendar-sidebar">
+                      <div class="sidebar-wrapper">
+                          <div class="card-body d-flex justify-content-center">
+                              <button class="btn btn-primary btn-toggle-sidebar btn-block" data-toggle="modal" data-target="#add-new-sidebar">
+                                  <span class="align-middle">Add On-Call Schedule </span>
+                              </button>
+                          </div>
+                          <div class="card-body pb-0">
+                              <h5 class="section-label mb-1">
+                                  <span class="align-middle">Filter</span>
+                              </h5>
+                              <div class="custom-control custom-checkbox mb-1">
+                                  <input type="checkbox" class="custom-control-input select-all" id="select-all" checked />
+                                  <label class="custom-control-label" for="select-all">View All</label>
+                              </div>
+                              <div class="calendar-events-filter">
+                                {% for team in teams %}
+                                  <div class="custom-control custom-control-danger custom-checkbox mb-1">
+                                      <input type="checkbox" class="custom-control-input input-filter" id="{{ team.name }}" data-value="{{ team.name }}" checked />
+                                      <label class="custom-control-label" for="{{ team.name }}">{{ team.name }}</label>
+                                  </div>
+                                {% endfor %}
+                              </div>
+                          </div>
+                      </div>
+                      <div class="mt-auto">
+                          <img src="/static/app-assets/images/pages/calendar-illustration.png" alt="Calendar illustration" class="img-fluid" />
+                      </div>
+                  </div>
+                  <!-- /Sidebar -->
+
+                  <!-- Calendar -->
+                  <div class="col position-relative">
+                      <div class="card shadow-none border-0 mb-0 rounded-0">
+                          <div class="card-body pb-0">
+                              <div id="calendar"></div>
+                          </div>
+                      </div>
+                  </div>
+                  <!-- /Calendar -->
+                  <div class="body-content-overlay"></div>
+              </div>
+          </div>
+          <!-- Calendar Add/Update/Delete event modal-->
+          <div class="modal modal-slide-in event-sidebar fade" id="add-new-sidebar">
+              <div class="modal-dialog sidebar-lg">
+                  <div class="modal-content p-0">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">×</button>
+                      <div class="modal-header mb-1">
+                          <h5 class="modal-title">Add Event</h5>
+                      </div>
+                      <div class="modal-body flex-grow-1 pb-sm-0 pb-3">
+                          <form class="event-form" action="{{ url_for('on_call_router_api.create_on_call_schedule') }}" method="POST">
+                              {{ form.csrf_token }}
+                              <div class="form-group">
+                                  <label for="username" class="form-label">{{ form.user.label.text }}</label>
+                                  {{ form.user }}
+                              </div>
+                              <div class="form-group position-relative">
+                                  <label for="start_date" class="form-label">{{ form.start_date.label.text }}</label>
+                                  {{ form.start_date }}
+                              </div>
+                              <div class="form-group position-relative">
+                                  <label for="end_date" class="form-label">{{ form.end_date.label.text }}</label>
+                                  {{ form.end_date }}
+                              </div>
+                              <div class="form-group d-flex">
+                                  <button type="submit" class="btn btn-primary add-event-btn mr-1">Add</button>
+                                  <button type="button" class="btn btn-outline-secondary btn-cancel" data-dismiss="modal">Cancel</button>
+                                  <button type="submit" class="btn btn-primary update-event-btn d-none mr-1">Update</button>
+                                  <button class="btn btn-outline-danger btn-delete-event d-none">Delete</button>
+                              </div>
+                          </form>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <!--/ Calendar Add/Update/Delete event modal-->
+      </section>
+      <!-- Full calendar end -->
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block js_content %}
+
+<script src="/static/app-assets/vendors/js/calendar/fullcalendar.min.js"></script>
+<script src="/static/app-assets/vendors/js/extensions/moment.min.js"></script>
+<script src="/static/app-assets/vendors/js/pickers/flatpickr/flatpickr.min.js"></script>
+<script src="/static/assets/js/on-call-page.js"></script>
+
+<script>
+  $(window).on('load', function() {
+    $("#main-menu-navigation li.active").removeClass("active");
+    $("#main-menu-navigation li#on-call").addClass("active");
+  })
+</script>
+
+{% endblock %}
