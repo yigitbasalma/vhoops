@@ -38,7 +38,7 @@
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
-    <li><a href="https://github.com/yigitbasalma/vhoops/tree/master/docs/images/screenshots">Screenshots</a></li>
+    <li><a href="https://github.com/yigitbasalma/vhoops/tree/main/docs/images/screenshots">Screenshots</a></li>
   </ol>
 </details>
 
