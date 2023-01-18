@@ -1,7 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from couchbase.cluster import Cluster, ClusterOptions, PasswordAuthenticator
+from couchbase.cluster import Cluster
+from couchbase.auth import PasswordAuthenticator
+from couchbase.options import ClusterOptions
 from couchbase.exceptions import DocumentNotFoundException, DocumentExistsException
 from json import dumps, loads
 
@@ -11,8 +13,8 @@ from vhoops.external.x_tools import calculate_hash
 class NoSQL(object):
     def __init__(self, app):
         cluster = Cluster(
-            connection_string=app.config["CACHE_CONN_STRING"],
-            options=ClusterOptions(
+            app.config["CACHE_CONN_STRING"],
+            ClusterOptions(
                 authenticator=PasswordAuthenticator(
                     username=app.config["CACHE_USERNAME"],
                     password=app.config["CACHE_PASSWORD"]

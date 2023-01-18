@@ -15,6 +15,3 @@ class CeleryJobLogs(Base):
 
     def __repr__(self):
         return '<CeleryJobLog %r>' % self.id
-
-
-db.create_all()

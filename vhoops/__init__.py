@@ -124,6 +124,9 @@ user_base = app.config["USER_BASE"]
 temp_dir = app.config["TEMP_DIR"]
 base_url = app.config["BASE_URL"]
 
+# Imports for creating database model
+from vhoops.tasks.celery import models
+
 
 # Constraint values
 @app.context_processor
@@ -132,7 +135,6 @@ def constraints():
 
 
 if app:
-    db.create_all()
 
     # UI Pages
     from vhoops.modules.auth.ui.routes import auth_router
@@ -180,4 +182,5 @@ if app:
     # Add blueprints for analytic api page
     app.register_blueprint(analytics_router_api)
 
-db.create_all()
+with app.app_context():
+    db.create_all()

@@ -1,9 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Imports for creating database model
-from vhoops.tasks.celeryy import models
-
 imports = [
     "vhoops.tasks.on_call",
     "vhoops.tasks.alert_routing",
